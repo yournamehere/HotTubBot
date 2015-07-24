@@ -1,12 +1,9 @@
 import org.jibble.pircbot.*;
 
-import org.jgrapht.*;
-import org.jgrapht.graph.*;
-import org.jgrapht.alg.*;
-
 import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
 import java.util.concurrent.TimeUnit;
 
 import org.json.*;
