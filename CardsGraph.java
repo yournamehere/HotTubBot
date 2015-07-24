@@ -135,8 +135,36 @@ public class CardsGraph{
 		sb.append(" ("+path.size()+")");
 		return sb.toString();
 	}
+	public void printLongestShortestPaths(){
+		String[] nameslist = namesGraph.vertexSet().toArray(new String[0]);
+		double max = 13;
+		for(int i = 0; i<nameslist.length-1; i++){
+			BellmanFordShortestPath<String, DefaultEdge> pathcalculator 
+				= new BellmanFordShortestPath<String, DefaultEdge>(namesGraph,nameslist[i]);
+			for(int j=i+1; j<nameslist.length; j++){
+				double cost = pathcalculator.getCost(nameslist[j]);
+				if (Double.isInfinite(cost)) continue;
+				if (cost>=max){
+					max = cost;
+					System.out.println(cost +": "+ pathcalculator.getPathEdgeList(nameslist[j]));
+				}
+			}
+		}
+	}
+	public void printNonTrivialComponents(){
+		ConnectivityInspector<String,DefaultEdge> connect 
+			= new ConnectivityInspector<String,DefaultEdge>(namesGraph);
+		List<Set<String>> connectedSets = connect.connectedSets();
+		for(Set<String> component : connectedSets){
+			if(component.size()<10 && component.size()>1){
+				System.out.println(component);
+			}
+		}
+	}
 	public static void main(String[] args) throws Exception{
 		CardsGraph myGraph = new CardsGraph();
+		myGraph.printNonTrivialComponents();
+		myGraph.printLongestShortestPaths();
 	}
 
 }
