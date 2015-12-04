@@ -12,8 +12,8 @@ public class HotTubBot extends PircBot {
 
 	static final String INVOKE_HOTTUB_COMMAND = ".hottub";
 	static final String BOT_NAME = "HotTub";
-	static final String SERVER = "127.0.0.1";
-//	static final String SERVER = "irc.synirc.net";
+//	static final String SERVER = "127.0.0.1";
+	static final String SERVER = "irc.synirc.net";
 	static final String CHANNEL = "#mtgoon";
 
 	CardsGraph cardsGraph;
@@ -59,14 +59,14 @@ public class HotTubBot extends PircBot {
 		if (message.toLowerCase().startsWith(INVOKE_HOTTUB_COMMAND)){
 			message = message.substring(INVOKE_HOTTUB_COMMAND.length());
 			String[] cardNames = message.split(">");
-			
+
 			if (cardNames.length > 2){
 				printUsage(channel, sender);
 				return;
 			}
 			if(cardNames.length == 1){
 				String response = cardsGraph.adjacentNodes(cardNames[0].trim());
-				sendMessage (channel, sender + ":" + response);
+				sendMessage (channel, sender + ": " + response);
 				return;
 			}
 			//else length == 2

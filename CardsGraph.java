@@ -10,9 +10,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class CardsGraph{
+
 	static final String DB_PATH = "AllCards.json";
+	
+	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with"};
+
 	UndirectedGraph<String, DefaultEdge> namesGraph;
 	Map<String,String> realNames;
+
 	public CardsGraph () throws Exception{
 				Map<String,ArrayList<String>> dict = new HashMap<String,ArrayList<String>>();
 		namesGraph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
@@ -38,9 +43,10 @@ public class CardsGraph{
 			String[] words = name.split(" ");
 			for(String word : words){
 				word = word.toLowerCase();
-				if (word.equals("of") || word.equals("the") || word.equals("and") || word.equals("to") || word.equals("from") || word.equals("in") || word.equals("for") || word.equals("at") || word.equals("a") || word.equals("into") || word.equals("with")){
+				if (Arrays.asList(IGNORE_WORDS).contains(word)){
 					continue;
 				}
+				//strip leading and trailing characters, also 's and
 				word = word.replace("\"", "").replace("'s", "").replace("!", "").replace("?", "").replace("s'", "s").replace(",", "").replace("(", "").replace(")","");
 				if(dict.containsKey(word)){
 
