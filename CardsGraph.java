@@ -46,7 +46,7 @@ public class CardsGraph{
 				if (Arrays.asList(IGNORE_WORDS).contains(word)){
 					continue;
 				}
-				//strip leading and trailing characters, also 's and
+				//strip leading and trailing characters, also punctuation
 				word = word.replace("\"", "").replace("'s", "").replace("!", "").replace("?", "").replace("s'", "s").replace(",", "").replace("(", "").replace(")","");
 				if(dict.containsKey(word)){
 
