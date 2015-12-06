@@ -1,4 +1,3 @@
-
 import org.json.*;
 
 import org.jgrapht.*;
@@ -19,13 +18,14 @@ public class CardsGraph{
 	Map<String,String> realNames;
 
 	public CardsGraph () throws Exception{
-				Map<String,ArrayList<String>> dict = new HashMap<String,ArrayList<String>>();
+		Map<String,ArrayList<String>> dict = new HashMap<String,ArrayList<String>>();
 		namesGraph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
 		realNames = new HashMap<String,String>();
 
 		String rawtext = new String(Files.readAllBytes(Paths.get(DB_PATH)));
 		JSONObject cards = new JSONObject(rawtext);
 		Iterator<String> names = cards.keys();
+
 		while(names.hasNext()){
 			String name = names.next();
 			JSONObject card = cards.getJSONObject(name);

@@ -1,12 +1,8 @@
 import org.jibble.pircbot.*;
 
 import java.util.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import java.util.concurrent.TimeUnit;
-
-import org.json.*;
 
 public class HotTubBot extends PircBot {
 
