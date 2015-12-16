@@ -4,4 +4,4 @@
 
 IRC bot which provides operations based on the graph created by the card Urza's Hot Tub.
 
-Won't work without AllCads.json from http://mtgjson.com/
+Won't work without AllCards.json from http://mtgjson.com/
