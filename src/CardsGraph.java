@@ -141,6 +141,18 @@ public class CardsGraph{
 		sb.append(" ("+path.size()+")");
 		return sb.toString();
 	}
+	public void printHighestDegree(){
+		String[] nameslist = namesGraph.vertexSet().toArray(new String[0]);
+		Arrays.sort(nameslist, new Comparator<String> (){
+			public int compare (String o1, String o2){
+				return namesGraph.degreeOf(o2) - namesGraph.degreeOf(o1);
+			}
+		});
+		for(int i = 0 ; i < 100; i++){
+			System.out.println(namesGraph.degreeOf(nameslist[i]) + " : " + nameslist[i]);
+		}
+		
+	}
 	public void printLongestShortestPaths(){
 		String[] nameslist = namesGraph.vertexSet().toArray(new String[0]);
 		double max = 13;
@@ -170,6 +182,7 @@ public class CardsGraph{
 	public static void main(String[] args) throws Exception{
 		CardsGraph myGraph = new CardsGraph();
 		myGraph.printNonTrivialComponents();
+		myGraph.printHighestDegree();
 		myGraph.printLongestShortestPaths();
 	}
 
