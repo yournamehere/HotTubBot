@@ -7,16 +7,19 @@ import java.util.concurrent.TimeUnit;
 public class HotTubBot extends PircBot {
 
 	static final String INVOKE_HOTTUB_COMMAND = ".hottub";
+	static final String INVOKE_HIGHNOON_COMMAND = ".highnoon";
 	static final String BOT_NAME = "HotTub";
 //	static final String SERVER = "127.0.0.1";
 	static final String SERVER = "irc.synirc.net";
 	static final String CHANNEL = "#mtgoon";
 
 	CardsGraph cardsGraph;
+	HighNoon highNoon;
 
 	public HotTubBot() throws Exception{
 		this.setName(BOT_NAME);
 		cardsGraph = new CardsGraph();
+		highNoon = new HighNoon();
 	}
 	private void printUsage(String channel, String sender){
 				sendMessage(channel, sender + ": Usage: " + INVOKE_HOTTUB_COMMAND + " card1 > card2 , or " + INVOKE_HOTTUB_COMMAND + " card");
@@ -38,7 +41,7 @@ public class HotTubBot extends PircBot {
 	}
 
 	public void onPrivateMessage(String sender, String login, String hostname, String message){
-		if (! message.toLowerCase().startsWith(INVOKE_HOTTUB_COMMAND)){
+		if (! message.toLowerCase().startsWith(INVOKE_HOTTUB_COMMAND) && !message.toLowerCase().startsWith(INVOKE_HIGHNOON_COMMAND)){
 			printUsage(sender, sender);
 		}
 		else{
@@ -47,7 +50,10 @@ public class HotTubBot extends PircBot {
 	}
 
 	public void onMessage(String channel, String sender, String login, String hostname, String message){
-
+		if (message.toLowerCase().startsWith(INVOKE_HIGHNOON_COMMAND)){
+			sendMessage(channel, highNoon.getHighNoonLocation());
+			return;
+		}
 		if (message.toLowerCase().equals(INVOKE_HOTTUB_COMMAND)){
 			printUsage(channel, sender);
 			return;
