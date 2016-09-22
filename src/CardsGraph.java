@@ -25,7 +25,7 @@ public class CardsGraph{
 		String toSimpleForm(String name){
 			name = name.toLowerCase();
 			name = name.replace("ã†", "ae").replace("ã»", "u").replace("ã¡", "a").replace("ã­","i").replace("ãº","u").replace("ã¢","a");
-			name = name.replace("\"", "").replace("'s", "").replace("!", "").replace("?", "").replace("s'", "s").replace(",", "").replace("(", "").replace(")","");
+			name = name.replace("\"", "").replace("'", "").replace("!", "").replace("?", "").replace(",", "").replace("(", "").replace(")","").replace("-","");
 			return name;
 		}
 	}
@@ -198,11 +198,25 @@ public class CardsGraph{
 		ConnectivityInspector<String,DefaultEdge> connect 
 			= new ConnectivityInspector<String,DefaultEdge>(namesGraph);
 		List<Set<String>> connectedSets = connect.connectedSets();
+		int trivialCount = 0;
+		int majorSize = 0;
 		for(Set<String> component : connectedSets){
+			if(component.size() == 1){
+				trivialCount++;
+			}
 			if(component.size()<10 && component.size()>1){
 				System.out.println(component);
 			}
+			if(component.size()>=10){
+				if (majorSize != 0){
+					System.out.println("There are multiple large components found");
+				}
+				majorSize = component.size();
+			}
 		}
+		System.out.println("Trivial Components: " + trivialCount);
+		System.out.println("Major Component Size: " + majorSize);
+
 	}
 	public static void main(String[] args) throws Exception{
 		CardsGraph myGraph = new CardsGraph();
