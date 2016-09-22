@@ -10,17 +10,38 @@ import java.nio.file.Paths;
 
 public class CardsGraph{
 
+	public static class RealNames{
+		private Map<String,String> namesMap = new HashMap<String,String>();
+		public String get(String name){
+			String realName = namesMap.get(toSimpleForm(name));
+			if (realName == null){ 
+				System.out.println(name);
+			}
+			return realName;
+		}
+		public String put(String name){
+			return namesMap.put(toSimpleForm(name),name);
+		}
+		String toSimpleForm(String name){
+			name = name.toLowerCase();
+			name = name.replace("ã†", "ae").replace("ã»", "u").replace("ã¡", "a").replace("ã­","i").replace("ãº","u").replace("ã¢","a");
+			name = name.replace("\"", "").replace("'s", "").replace("!", "").replace("?", "").replace("s'", "s").replace(",", "").replace("(", "").replace(")","");
+			return name;
+		}
+	}
+
 	static final String DB_PATH = "AllCards.json";
 	
 	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with"};
 
 	UndirectedGraph<String, DefaultEdge> namesGraph;
-	Map<String,String> realNames;
+	RealNames realNames;
 
+	
 	public CardsGraph () throws Exception{
 		Map<String,ArrayList<String>> dict = new HashMap<String,ArrayList<String>>();
 		namesGraph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
-		realNames = new HashMap<String,String>();
+		realNames = new RealNames();
 
 		String rawtext = new String(Files.readAllBytes(Paths.get(DB_PATH)));
 		JSONObject cards = new JSONObject(rawtext);
@@ -37,7 +58,7 @@ public class CardsGraph{
 			if(layout.equals("token")) continue;
 			if(layout.equals("phenomenon")) continue;
 
-			realNames.put(name.toLowerCase(), name);
+			realNames.put(name);
 			name = name.toLowerCase();
 			namesGraph.addVertex(name);
 			String[] words = name.split(" ");
@@ -64,9 +85,13 @@ public class CardsGraph{
 			}
 		}
 	}
-	public String adjacentNodes(String vertex){
-		if (!namesGraph.containsVertex(vertex.toLowerCase())){
-			return "Can't find card " + vertex;
+	
+
+	
+	public String adjacentNodes(String name){
+		String vertex = realNames.get(name);
+		if(vertex == null){
+			return "Can't find card " + name;
 		}
 		vertex = vertex.toLowerCase();
 
@@ -102,16 +127,16 @@ public class CardsGraph{
 		return  realNames.get(vertex) + " has degree " + degree + ": " + sb.toString();
 
 	}
-	String shortestPath(String startpoint, String endpoint){
-
-		String startlower = startpoint.toLowerCase();
-		String endlower = endpoint.toLowerCase();
-
-		if (!namesGraph.containsVertex(startpoint.toLowerCase())){
-			return "Can't find card " + startpoint;
+	String shortestPath(String start, String end){
+		
+		String startpoint= realNames.get(start);
+		String endpoint = realNames.get(end);
+		
+		if(startpoint == null){
+			return "Can't find card " + start;
 		}
-		if (!namesGraph.containsVertex(endpoint.toLowerCase())){
-			return "Can't find card " + endpoint;
+		if(endpoint == null){
+			return "Can't find card " + end;
 		}
 		startpoint = startpoint.toLowerCase();
 		endpoint = endpoint.toLowerCase();
@@ -181,9 +206,17 @@ public class CardsGraph{
 	}
 	public static void main(String[] args) throws Exception{
 		CardsGraph myGraph = new CardsGraph();
-		myGraph.printNonTrivialComponents();
-		myGraph.printHighestDegree();
-		myGraph.printLongestShortestPaths();
+		if(args.length == 0){
+			myGraph.printNonTrivialComponents();
+			myGraph.printHighestDegree();
+			myGraph.printLongestShortestPaths();
+		}
+		else if (args.length == 1){
+			System.out.println(myGraph.adjacentNodes(args[0]));
+		}
+		else{
+			System.out.println(myGraph.shortestPath(args[0],args[1]));
+		}
 	}
 
 }
