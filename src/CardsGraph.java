@@ -11,6 +11,8 @@ import java.nio.file.Paths;
 public class CardsGraph{
 
 	public static class RealNames{
+		private static final String[][] SPECIAL_CHARS = {{"á", "a"}, {"ú","u"},{"û","u"},{"í","i"},{"ö","o"},{"à","a"},{"é","e"},{"â","a"},{"®",""}};
+		private static final String[] PUNCTUATION = {"\"","'", "!", "?", ",","(",")","-"};
 		private Map<String,String> namesMap = new HashMap<String,String>();
 		public String get(String name){
 			String realName = namesMap.get(toSimpleForm(name));
@@ -24,15 +26,22 @@ public class CardsGraph{
 		}
 		String toSimpleForm(String name){
 			name = name.toLowerCase();
-			name = name.replace("ã†", "ae").replace("ã»", "u").replace("ã¡", "a").replace("ã­","i").replace("ãº","u").replace("ã¢","a");
-			name = name.replace("\"", "").replace("'", "").replace("!", "").replace("?", "").replace(",", "").replace("(", "").replace(")","").replace("-","");
+			for (String[] specialChar : SPECIAL_CHARS){
+				name = name.replace(specialChar[0],specialChar[1]);
+			}
+			for  (String punctuation : PUNCTUATION){
+				name = name.replace(punctuation,"");
+			}
+			if(!name.chars().allMatch(c->c<128)){
+				System.out.println(name);
+			}
 			return name;
 		}
 	}
 
 	static final String DB_PATH = "AllCards.json";
 	
-	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with"};
+	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with", "by"};
 
 	UndirectedGraph<String, DefaultEdge> namesGraph;
 	RealNames realNames;
@@ -43,7 +52,7 @@ public class CardsGraph{
 		namesGraph = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
 		realNames = new RealNames();
 
-		String rawtext = new String(Files.readAllBytes(Paths.get(DB_PATH)));
+		String rawtext = new String(Files.readAllBytes(Paths.get(DB_PATH)), "UTF-8");
 		JSONObject cards = new JSONObject(rawtext);
 		Iterator<String> names = cards.keys();
 
@@ -180,7 +189,7 @@ public class CardsGraph{
 	}
 	public void printLongestShortestPaths(){
 		String[] nameslist = namesGraph.vertexSet().toArray(new String[0]);
-		double max = 13;
+		double max = 11;
 		for(int i = 0; i<nameslist.length-1; i++){
 			BellmanFordShortestPath<String, DefaultEdge> pathcalculator 
 				= new BellmanFordShortestPath<String, DefaultEdge>(namesGraph,nameslist[i]);
