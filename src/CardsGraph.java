@@ -14,6 +14,7 @@ public class CardsGraph{
 		private static final String[][] SPECIAL_CHARS = {{"á", "a"}, {"ú","u"},{"û","u"},{"í","i"},{"ö","o"},{"à","a"},{"é","e"},{"â","a"},{"®",""}};
 		private static final String[] PUNCTUATION = {"\"","'", "!", "?", ",","(",")","-"};
 		private Map<String,String> namesMap = new HashMap<String,String>();
+
 		public String get(String name){
 			String realName = namesMap.get(toSimpleForm(name));
 			if (realName == null){ 
@@ -41,7 +42,7 @@ public class CardsGraph{
 
 	static final String DB_PATH = "AllCards.json";
 	
-	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with", "by"};
+	static final String[] IGNORE_WORDS = {"of", "the", "and", "to", "from", "in", "for","at","a", "into", "with", "by", "or"};
 
 	UndirectedGraph<String, DefaultEdge> namesGraph;
 	RealNames realNames;
@@ -62,10 +63,10 @@ public class CardsGraph{
 
 			String layout = card.getString("layout");
 			if(layout.equals("vanguard")) continue;
-			if(layout.equals("scheme")) continue;
-			if(layout.equals("plane")) continue;
+			//if(layout.equals("scheme")) continue;
+			//if(layout.equals("plane")) continue;
 			if(layout.equals("token")) continue;
-			if(layout.equals("phenomenon")) continue;
+			//if(layout.equals("phenomenon")) continue;
 
 			realNames.put(name);
 			name = name.toLowerCase();
@@ -107,7 +108,10 @@ public class CardsGraph{
 		StringBuilder sb = new StringBuilder();
 		ConnectivityInspector<String,DefaultEdge> connect = new ConnectivityInspector<String,DefaultEdge>(namesGraph);
 		Set<String> connectedComponent = connect.connectedSetOf(vertex);
-		if(connectedComponent.size() < 10){
+		if(connectedComponent.size() == 1){
+			return realNames.get(name) + " isn't connected to anything.";
+		}
+		else if(connectedComponent.size() < 10){
 			sb.append("belongs to component:");
 			for(String member : connectedComponent){
 				sb.append(" ");
@@ -184,6 +188,32 @@ public class CardsGraph{
 		});
 		for(int i = 0 ; i < 100; i++){
 			System.out.println(namesGraph.degreeOf(nameslist[i]) + " : " + nameslist[i]);
+		}
+		int i = nameslist.length-1;
+		while(true){
+
+			if (namesGraph.degreeOf(nameslist[i]) > 1){
+				break;
+			}
+			if (namesGraph.degreeOf(nameslist[i]) != 0 ){
+				String vertex = nameslist[i];
+				Set<DefaultEdge> adjacent = namesGraph.edgesOf(vertex);
+				for(DefaultEdge edge : adjacent){
+					String neighbor = "";
+					String source = namesGraph.getEdgeSource(edge);
+					String target = namesGraph.getEdgeTarget(edge); 
+					if (source.equals(vertex)){
+						neighbor = target;
+					}
+					else{
+						neighbor = source;
+					}
+					if (namesGraph.degreeOf(neighbor) == 2){
+					System.out.println(realNames.get(vertex));
+					}
+				}
+			}
+			i -= 1;
 		}
 		
 	}
